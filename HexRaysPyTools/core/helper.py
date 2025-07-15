@@ -50,7 +50,7 @@ def get_ordinal(tinfo):
     if ordinal == 0:
         t = idaapi.tinfo_t()
         struct_name = tinfo.dstr().split()[-1]        # Get rid of `struct` prefix or something else
-        t.get_named_type(idaapi.cvar.idati, struct_name)
+        t.get_named_type(idaapi.get_idati(), struct_name)
         ordinal = t.get_ordinal()
     return ordinal
 
@@ -176,7 +176,7 @@ def get_nice_pointed_object(tinfo):
         name = tinfo.dstr()
         if name[0] == 'P':
             pointed_tinfo = idaapi.tinfo_t()
-            if pointed_tinfo.get_named_type(idaapi.cvar.idati, name[1:]):
+            if pointed_tinfo.get_named_type(idaapi.get_idati(), name[1:]):
                 if tinfo.get_pointed_object().equals_to(pointed_tinfo):
                     return pointed_tinfo
     except TypeError:
@@ -248,9 +248,9 @@ def import_structure(name, tinfo):
     if idc.parse_decl(cdecl_typedef, idaapi.PT_TYP) is None:
         return 0
 
-    previous_ordinal = idaapi.get_type_ordinal(idaapi.cvar.idati, name)
+    previous_ordinal = idaapi.get_type_ordinal(idaapi.get_idati(), name)
     if previous_ordinal:
-        idaapi.del_numbered_type(idaapi.cvar.idati, previous_ordinal)
+        idaapi.del_numbered_type(idaapi.get_idati(), previous_ordinal)
         ordinal = idaapi.idc_set_local_type(previous_ordinal, cdecl_typedef, idaapi.PT_TYP)
     else:
         ordinal = idaapi.idc_set_local_type(-1, cdecl_typedef, idaapi.PT_TYP)
